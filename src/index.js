@@ -1,7 +1,7 @@
 var container;
 var camera, scene, renderer;
 var uniforms, uniforms1, material, material1, mesh;
-var scale = 0.0;
+var scale = { x: 1.0, y: 1.0 };
 var mouseX = 0, mouseY = 0,
 lat = 0, lon = 0, phy = 0, theta = 0;
 var windowHalfX = window.innerWidth / 2;
@@ -25,7 +25,7 @@ function init() {
   uniforms = {
     time: { type: "f", value: 1.0 },
     resolution: { type: "v3", value: new THREE.Vector3() },
-    scale: { type: "f", value: 1.0 },
+    scale: { type: "v2", value: new THREE.Vector2() },
   };
   
   uniforms1 = {
@@ -92,17 +92,14 @@ function render() {
   var elapsedMilliseconds = Date.now() - startTime;
   var elapsedSeconds = elapsedMilliseconds / 1000.;
 
+  uniforms.scale.value.x = scale.x;
+  uniforms.scale.value.y = scale.y;
+  
   uniforms.time.value = 60. * elapsedSeconds;
-  uniforms.scale.value = scale;
-
   uniforms1.time.value += 60. * elapsedSeconds;
 
   cube.rotation.y += 0.005;
   cube.rotation.x += 0.003;
-
-  // if(scale > 0.2) scale -= 0.04;
-  
-  // if(scale < 0.1) scale = 0.1;
   
   renderer.render( scene, camera );
 }
@@ -123,7 +120,15 @@ function listeners() {
 
 function handleSpacePress() {
   // visual
-  scale = 1.0;
+  console.log('before: scale:  ', scale);
+  TweenMax.fromTo(scale, 0.5, {
+    x: 1.0,
+    y: 1.0,
+  }, {
+    x: 0.1,
+    y: 0.1,
+  });
+  console.log('scale:  ', scale);
 
   // aural
   // play a middle 'C' for the duration of an 8th note

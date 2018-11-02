@@ -34,7 +34,7 @@
   <script id="fragmentShader" type="x-shader/x-fragment">
     uniform float time;
     uniform vec3 resolution;
-    uniform float scale;
+    uniform vec2 scale;
 
     varying vec2 vUv;
 
@@ -57,7 +57,7 @@
       vec2 position = vUv;
       vec3 color = vec3(0.0, 0.0, 0.0);
       
-      color = vec3(rectStroke(position, 0.75, 0.75, 0.25, 0.25, scale));
+      color = vec3(rectStroke(position, 0.75, 0.75, 0.25, 0.25, scale.x * scale.y));
 
       gl_FragColor = vec4(color, 1.0);
     }
