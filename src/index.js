@@ -1,7 +1,7 @@
 var container;
 var camera, scene, renderer;
 var uniforms, uniforms1, material, material1, mesh;
-var scale = { x: 1.0, y: 1.0 };
+var scale = { x: 0.1, y: 0.1 };
 var mouseX = 0, mouseY = 0,
 lat = 0, lon = 0, phy = 0, theta = 0;
 var windowHalfX = window.innerWidth / 2;
