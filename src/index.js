@@ -105,7 +105,17 @@ function render() {
 }
 
 function initializeTone() {
-  synth = new Tone.Synth().toMaster();
+  synth = new Tone.Synth({
+    oscillator : {
+      type : 'triangle8'
+    },
+    envelope : {
+      attack : 0.1,
+      decay : 1,
+      sustain: 0.4,
+      release: 4
+    }
+  }).toMaster()
 
   
 }
