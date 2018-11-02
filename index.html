@@ -12,13 +12,18 @@
   <div id="container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TimelineMax.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/plugins/CSSPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/easing/EasePack.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.3.11/Tone.js"></script>
 
   <script id="vertexShader" type="x-shader/x-vertex">
     uniform float time;
     uniform vec3 resolution;
 
     varying vec2 vUv;
-    
+ 
     void main() {
 				vUv = uv;
 				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
@@ -33,12 +38,44 @@
 
     varying vec2 vUv;
 
+    float rect(in vec2 st, in float top, in float right, in float bottom, in float left) {
+        float t = step(1.0 - top, 1.0 - st.y);
+        float r = step(1.0 - right, 1.0 - st.x);
+        float b = step(bottom, st.y);
+        float l = step(left, st.x);
+        return b * l * r * t;
+    }
+    float rectStroke(in vec2 st, in float top, in float right, in float bottom, in float left, in float thickness) {
+        float topRect = rect(st, top, right, top - thickness, left);
+        float rightRect = rect(st, top, right, bottom, right - thickness);
+        float bottomRect = rect(st, bottom + thickness, right, bottom, left);
+        float leftRect = rect(st, top, left + thickness, bottom, left);
+        return bottomRect + topRect + rightRect + leftRect;
+    }
+
     void main()	{
-      float x = step(10.0 * scale, mod(time * 0.3 + gl_FragCoord.x, 20.0));
-      float y = step(10.0 * scale, mod(time * 0.3 + gl_FragCoord.y, 20.0));
-      gl_FragColor = vec4(vec3(min(x, y)), 1.0);
+      vec2 position = vUv;
+      vec3 color = vec3(0.0, 0.0, 0.0);
+      
+      color = vec3(rectStroke(position, 0.75, 0.75, 0.25, 0.25, scale));
+
+      gl_FragColor = vec4(color, 1.0);
     }
   </script>
+
+  <script id="fragment_shader4" type="x-shader/x-fragment">
+    uniform float time;
+    varying vec2 vUv;
+
+    void main( void ) {
+      vec2 position = - 1.0 + 2.0 * vUv;
+      float red = abs( sin( position.x * position.y + time / 150.0 ) );
+      float green = abs( sin( position.x * position.y + time / 140.0 ) );
+      float blue = abs( sin( position.x * position.y + time / 130.0 ) );
+      gl_FragColor = vec4( red, green, blue, 1.0 );
+    }
+  </script>
+
 </body>
 
 </html>
